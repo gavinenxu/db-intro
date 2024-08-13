@@ -47,6 +47,10 @@ class LRUReplacer : public Replacer {
 
  private:
   // TODO(student): implement me!
+  size_t num_pages_;
+  std::mutex latch_;
+  std::list<frame_id_t> frame_dll_; // frame double linked list
+  std::unordered_map<frame_id_t, std::list<frame_id_t>::iterator> frame_table_;
 };
 
 }  // namespace bustub
