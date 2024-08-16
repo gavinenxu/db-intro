@@ -18,7 +18,7 @@ namespace bustub {
 LRUKReplacer::LRUKReplacer(size_t num_frames, size_t k) : replacer_size_(num_frames), k_(k) {}
 
 auto LRUKReplacer::Evict(frame_id_t *frame_id) -> bool {
-  std::scoped_lock lock(latch_);
+  std::lock_guard lock(latch_);
 
   size_t inf = std::numeric_limits<size_t>::max();
   int victim_id = INVALID_FRAME_ID;
@@ -49,7 +49,7 @@ auto LRUKReplacer::Evict(frame_id_t *frame_id) -> bool {
 }
 
 void LRUKReplacer::RecordAccess(frame_id_t frame_id, [[maybe_unused]] AccessType access_type) {
-  std::scoped_lock lock(latch_);
+  std::lock_guard lock(latch_);
 
   if (frame_id < 0 || static_cast<size_t>(frame_id) > replacer_size_) {
     throw Exception(ExceptionType::OUT_OF_RANGE, "Frame id out of range");
@@ -68,7 +68,7 @@ void LRUKReplacer::RecordAccess(frame_id_t frame_id, [[maybe_unused]] AccessType
 }
 
 void LRUKReplacer::SetEvictable(frame_id_t frame_id, bool set_evictable) {
-  std::scoped_lock lock(latch_);
+  std::lock_guard lock(latch_);
 
   if (frame_id < 0 || static_cast<size_t>(frame_id) > replacer_size_) {
     throw Exception(ExceptionType::OUT_OF_RANGE, "Frame id out of range");
@@ -90,7 +90,7 @@ void LRUKReplacer::SetEvictable(frame_id_t frame_id, bool set_evictable) {
 }
 
 void LRUKReplacer::Remove(frame_id_t frame_id) {
-  std::scoped_lock lock(latch_);
+  std::lock_guard lock(latch_);
 
   if (frame_id < 0 || static_cast<size_t>(frame_id) > replacer_size_) {
     throw Exception(ExceptionType::OUT_OF_RANGE, "Frame id out of range");
@@ -110,7 +110,7 @@ void LRUKReplacer::Remove(frame_id_t frame_id) {
 }
 
 auto LRUKReplacer::Size() -> size_t {
-  std::scoped_lock lock(latch_);
+  std::lock_guard lock(latch_);
   return curr_size_;
 }
 

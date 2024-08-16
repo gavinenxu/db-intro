@@ -20,7 +20,7 @@ LRUReplacer::~LRUReplacer() = default;
 
 // remove a frame and assign it to input frame_id 
 auto LRUReplacer::Victim(frame_id_t *frame_id) -> bool { 
-    std::scoped_lock lock{latch_};
+    std::lock_guard lock{latch_};
     if (frame_dll_.empty()) {
         return false;
     }
@@ -32,7 +32,7 @@ auto LRUReplacer::Victim(frame_id_t *frame_id) -> bool {
 
 // remove frame
 void LRUReplacer::Pin(frame_id_t frame_id) {
-    std::scoped_lock lock{latch_};
+    std::lock_guard lock{latch_};
     auto it = frame_table_.find(frame_id);
     if (it == frame_table_.end()) {
         return;
@@ -43,7 +43,7 @@ void LRUReplacer::Pin(frame_id_t frame_id) {
 
 // add frame
 void LRUReplacer::Unpin(frame_id_t frame_id) {
-    std::scoped_lock lock{latch_};
+    std::lock_guard lock{latch_};
     if (frame_dll_.size() >= num_pages_) {
         return;
     }
@@ -58,7 +58,7 @@ void LRUReplacer::Unpin(frame_id_t frame_id) {
 }
 
 auto LRUReplacer::Size() -> size_t {
-    std::scoped_lock lock{latch_};
+    std::lock_guard lock{latch_};
     return frame_dll_.size(); 
 }
 

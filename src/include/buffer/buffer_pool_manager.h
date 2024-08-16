@@ -210,6 +210,24 @@ class BufferPoolManager {
     // This is a no-nop right now without a more complex data structure to track deallocated pages
   }
 
-  // TODO(student): You may add additional private members and helper functions
+  /**
+   * Schedule a async disk read or write from a promise, return Promise if resolve
+   */
+  bool DiskSchedule(DiskRequest r) {
+   auto future = r.callback_.get_future();
+   disk_scheduler_->Schedule(std::move(r));
+   return future.get();
+  }
+
+  /**
+   * Apply for an available frame: from free_list first if avaialble, otherwise from replacer
+   * if nothing found, return INVALID_FRAME_ID
+   */
+  frame_id_t RequestFrameId();
+
+  /**
+   * Init page on buffer pool
+   */
+  void InitPageOnBufferPool(Page* page, page_id_t page_id, frame_id_t frame_id);
 };
 }  // namespace bustub

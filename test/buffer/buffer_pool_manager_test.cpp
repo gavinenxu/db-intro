@@ -23,7 +23,7 @@ namespace bustub {
 
 // NOLINTNEXTLINE
 // Check whether pages containing terminal characters can be recovered
-TEST(BufferPoolManagerTest, DISABLED_BinaryDataTest) {
+TEST(BufferPoolManagerTest, BinaryDataTest) {
   const std::string db_name = "test.db";
   const size_t buffer_pool_size = 10;
   const size_t k = 5;
@@ -88,6 +88,14 @@ TEST(BufferPoolManagerTest, DISABLED_BinaryDataTest) {
   EXPECT_EQ(0, memcmp(page0->GetData(), random_binary_data, BUSTUB_PAGE_SIZE));
   EXPECT_EQ(true, bpm->UnpinPage(0, true));
 
+  // Deletion
+  bool ok = bpm->DeletePage(0);
+  ASSERT_TRUE(ok);
+  ok = bpm->DeletePage(1);
+  ASSERT_TRUE(ok);
+  ok = bpm->DeletePage(9);
+  ASSERT_FALSE(ok);
+
   // Shutdown the disk manager and remove the temporary file we created.
   disk_manager->ShutDown();
   remove("test.db");
@@ -97,7 +105,7 @@ TEST(BufferPoolManagerTest, DISABLED_BinaryDataTest) {
 }
 
 // NOLINTNEXTLINE
-TEST(BufferPoolManagerTest, DISABLED_SampleTest) {
+TEST(BufferPoolManagerTest, SampleTest) {
   const std::string db_name = "test.db";
   const size_t buffer_pool_size = 10;
   const size_t k = 5;
@@ -145,6 +153,20 @@ TEST(BufferPoolManagerTest, DISABLED_SampleTest) {
   EXPECT_EQ(true, bpm->UnpinPage(0, true));
   EXPECT_NE(nullptr, bpm->NewPage(&page_id_temp));
   EXPECT_EQ(nullptr, bpm->FetchPage(0));
+
+  // Deletion
+  bool ok = bpm->DeletePage(0);
+  ASSERT_TRUE(ok);
+  ok = bpm->DeletePage(1);
+  ASSERT_TRUE(ok);
+  ok = bpm->DeletePage(9);
+  ASSERT_FALSE(ok);
+
+  // Flush
+  auto* page9 = bpm->FetchPage(9);
+  snprintf(page9->GetData(), BUSTUB_PAGE_SIZE, "new data");
+  ok = bpm->FlushPage(page9->GetPageId());
+  ASSERT_TRUE(ok);
 
   // Shutdown the disk manager and remove the temporary file we created.
   disk_manager->ShutDown();
